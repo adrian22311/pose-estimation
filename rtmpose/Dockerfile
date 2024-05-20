@@ -1,4 +1,3 @@
-# For more information, please refer to https://aka.ms/vscode-docker-python
 FROM python:3.9-slim-bullseye
 
 WORKDIR /app
@@ -10,6 +9,12 @@ RUN apt-get update && \
 RUN apt-get install -y ffmpeg libsm6 libxext6
 
 RUN git clone https://github.com/open-mmlab/mmpose.git tmp && mv tmp/* .
+# fix wrong config file
+# /app/projects/rtmpose/rtmpose/body_2d_keypoint/rtmpose-m_8xb512-700e_body8-halpe26-384x288.py
+# uncomment line 110, comment lines 111-116
+RUN sed -i '110s/^# //' /app/projects/rtmpose/rtmpose/body_2d_keypoint/rtmpose-m_8xb512-700e_body8-halpe26-384x288.py && \
+    sed -i '111,116s/^/#/' /app/projects/rtmpose/rtmpose/body_2d_keypoint/rtmpose-m_8xb512-700e_body8-halpe26-384x288.py
+
 # fix the error: FileNotFoundError: [Errno 2] No such file or directory: '/app/mmpose/.mim/model-index.yml'
 RUN mkdir -p /app/mmpose/.mim && cp /app/model-index.yml /app/mmpose/.mim/model-index.yml && cp -r /app/configs /app/mmpose/.mim/configs
 

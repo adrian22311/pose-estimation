@@ -1,6 +1,7 @@
 # This code is based on https://github.com/open-mmlab/mmpose/blob/main/demo/topdown_demo_with_mmdet.py
 # The original code is licensed under the Apache License 2.0
 
+import os
 from collections import namedtuple
 
 import mmcv
@@ -8,6 +9,10 @@ import numpy as np
 from mmpose.apis import inference_topdown
 from mmpose.apis import init_model as init_pose_estimator
 from mmpose.structures import merge_data_samples, split_instances
+
+assert os.getenv("POSE_CONFIG") is not None, "POSE_CONFIG environment variable is not set."
+assert os.getenv("POSE_CHECKPOINT") is not None, "POSE_CHECKPOINT environment variable is not set."
+
 
 Config = namedtuple(
     "Config",
@@ -35,9 +40,9 @@ Config = namedtuple(
 
 args = Config(
     # Config file for pose
-    pose_config="/app/projects/rtmpose/rtmpose/body_2d_keypoint/rtmpose-m_8xb256-420e_coco-256x192.py",
+    pose_config=os.getenv("POSE_CONFIG"),
     # Checkpoint file for pose
-    pose_checkpoint="https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/rtmpose-m_simcc-aic-coco_pt-aic-coco_420e-256x192-63eb25f7_20230126.pth",
+    pose_checkpoint=os.getenv("POSE_CHECKPOINT"),
     # input_file='' # Image/Video file
     show=False,  # whether to show img
     # output_root="",  # root of the output img file.
@@ -133,14 +138,16 @@ def inference(filename: str):
 
 
 if __name__ == "__main__":
-    pred = inference("/app/data/sampled_images/17905_2157397.jpg")
-    print(f"Keypoints: {pred['keypoints']}")
-    print(f"Keypoints scores: {pred['keypoint_scores']}")
-    print(f"Bbox: {pred['bbox']}")
-    print(f"Bbox scores: {pred['bbox_score']}")
-    print()
-    pred = inference("/app/data/sampled_images/559160_546425.jpg")
-    print(f"Keypoints: {pred['keypoints']}")
-    print(f"Keypoints scores: {pred['keypoint_scores']}")
-    print(f"Bbox: {pred['bbox']}")
-    print(f"Bbox scores: {pred['bbox_score']}")
+    if os.path.exists("/app/data/sampled_images/17905_2157397.jpg"):
+        pred = inference("/app/data/sampled_images/17905_2157397.jpg")
+        print(f"Keypoints: {pred['keypoints']}")
+        print(f"Keypoints scores: {pred['keypoint_scores']}")
+        print(f"Bbox: {pred['bbox']}")
+        print(f"Bbox scores: {pred['bbox_score']}")
+        print()
+    if os.path.exists("/app/data/sampled_images/559160_546425.jpg"):
+        pred = inference("/app/data/sampled_images/559160_546425.jpg")
+        print(f"Keypoints: {pred['keypoints']}")
+        print(f"Keypoints scores: {pred['keypoint_scores']}")
+        print(f"Bbox: {pred['bbox']}")
+        print(f"Bbox scores: {pred['bbox_score']}")
