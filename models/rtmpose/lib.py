@@ -126,8 +126,8 @@ def inference(filename: str):
     pred_keypoints : dict
         A dictionary containing the predicted keypoints.
         The dictionary has the following keys:
-        - "keypoints": list[list[float]] A list of keypoints -- [[x1,y1], ..., [x17,y17]].
-        - "keypoint_scores": list[float] A list of scores for each keypoint -- [score1, ..., score17] .
+        - "keypoints": list[list[float]] A list of keypoints -- [[x1,y1], ..., [x17,y17]] or [[x1,y1], ..., [x26,y26]].
+        - "keypoint_scores": list[float] A list of scores for each keypoint -- [score1, ..., score17] or [score1, ..., score26].
         - "bbox": tuple[list[float]] A one-element tuple of bounding boxes -- ([x,y,w,h],) - in this case [0, 0, <image-width>, <image-height>].
         - "bbox_score": (float) A score for bounding box -- score.
     """
@@ -141,6 +141,7 @@ if __name__ == "__main__":
     if os.path.exists("/app/data/sampled_images/17905_2157397.jpg"):
         pred = inference("/app/data/sampled_images/17905_2157397.jpg")
         print(f"Keypoints: {pred['keypoints']}")
+        print(f"Keypoints num: {len(pred['keypoints'])}")
         print(f"Keypoints scores: {pred['keypoint_scores']}")
         print(f"Bbox: {pred['bbox']}")
         print(f"Bbox scores: {pred['bbox_score']}")
@@ -148,6 +149,7 @@ if __name__ == "__main__":
     if os.path.exists("/app/data/sampled_images/559160_546425.jpg"):
         pred = inference("/app/data/sampled_images/559160_546425.jpg")
         print(f"Keypoints: {pred['keypoints']}")
+        print(f"Keypoints num: {len(pred['keypoints'])}")
         print(f"Keypoints scores: {pred['keypoint_scores']}")
         print(f"Bbox: {pred['bbox']}")
         print(f"Bbox scores: {pred['bbox_score']}")
