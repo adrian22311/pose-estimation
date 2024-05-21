@@ -28,7 +28,7 @@ def prepare_image(image):
     return inp, c, s
 
 
-def interference(filename: str) -> np.ndarray:
+def inference(filename: str) -> np.ndarray:
     """
     Args:
         filename: str: path to image file
@@ -46,7 +46,7 @@ def interference(filename: str) -> np.ndarray:
     return keypoints
     
 if __name__ == "__main__":
-    keypoint_coords = interference("data/sampled_images/17905_2157397.jpg")
+    keypoint_coords = inference("data/sampled_images/17905_2157397.jpg")
     print("Keypoint Coords: ")
     print(keypoint_coords)
     print("Shape: ", keypoint_coords.shape)

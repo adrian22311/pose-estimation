@@ -5,7 +5,7 @@ model = posenet.load_model(101)
 output_stride = model.output_stride
 
 
-def interference(filename: str) -> (np.ndarray, np.ndarray):
+def inference(filename: str) -> (np.ndarray, np.ndarray):
     """
     Interference the model with the input image
     :param filename: the path of the input image
@@ -35,7 +35,7 @@ def interference(filename: str) -> (np.ndarray, np.ndarray):
     return keypoint_scores, keypoint_coords
 
 if __name__ == "__main__":
-    keypoint_scores, keypoint_coords = interference("data/sampled_images/17905_2157397.jpg")
+    keypoint_scores, keypoint_coords = inference("data/sampled_images/17905_2157397.jpg")
     print("Keypoint Scores:")
     print(keypoint_scores)
     print("Keypoint Coords:")

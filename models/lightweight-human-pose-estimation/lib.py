@@ -8,7 +8,7 @@ from lightweight.modules.inference_engine_pytorch import InferenceEnginePyTorch
 net = InferenceEnginePyTorch("human-pose-estimation-3d.pth", 'CPU', use_tensorrt=False)
 
 
-def interference(filename):
+def inference(filename):
     """
     Interference the image and return the 2D poses
     :param filename: str, the path of the image
@@ -34,7 +34,7 @@ def interference(filename):
         
 
 if __name__ == "__main__":
-    poses_2d = interference("data/sampled_images/17905_2157397.jpg")
+    poses_2d = inference("data/sampled_images/17905_2157397.jpg")
     print(poses_2d)
     print(f"Total keypoints: {(len(poses_2d) - 1) // 3}")
     print(f"Numbers of keypoints: {len(list(filter(lambda x: x != -1, poses_2d))) // 3}")

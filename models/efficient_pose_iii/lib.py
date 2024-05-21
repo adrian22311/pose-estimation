@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 model, resolution = get_model(framework='tf', model_variant='iii')
 
-def interference(filename: str) -> List[Tuple[str, int, int]]:
+def inference(filename: str) -> List[Tuple[str, int, int]]:
     """
     Interference function to run the model on the input image
     :param filename: str: file path of the image
@@ -13,6 +13,6 @@ def interference(filename: str) -> List[Tuple[str, int, int]]:
     return analyze_image(model=model, file_path=filename, framework='tf', resolution=resolution, lite=False)
 
 if __name__ == "__main__":
-    keypoint_coords = interference("data/sampled_images/17905_2157397.jpg")
+    keypoint_coords = inference("data/sampled_images/17905_2157397.jpg")
     print("Keypoint Coords: ")
     print(keypoint_coords)
