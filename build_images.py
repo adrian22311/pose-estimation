@@ -25,6 +25,7 @@ def main():
                         os.path.join("models", folder),
                     ]
                 )
+                env = ["--env-file", env_file] if env_file else []
                 print(f"Running image {name} with env file {env_file}")
                 subprocess.check_output(
                     [
@@ -32,8 +33,7 @@ def main():
                         "run",
                         "--name",
                         name,
-                        "--env-file",
-                        env_file,
+                        *env,
                         "-v",
                         f"{os.path.join(os.getcwd(), 'sampled')}:/app/data:ro",
                         "-v",
