@@ -1,4 +1,9 @@
-def to_key_points(query_locations) -> (list[tuple[float, float]], list[tuple[tuple[int, int], int]]):
+from itertools import chain
+
+
+def to_key_points(
+    query_locations,
+) -> (list[tuple[float, float]], list[tuple[tuple[int, int], int]]):
     """
     Convert the model output query_locations to key points and edges
     :param query_locations: ndarray: 17x2 array of the coordinates of the query locations
@@ -24,3 +29,13 @@ def to_key_points(query_locations) -> (list[tuple[float, float]], list[tuple[tup
         ((8, 10), 1),  # r_elbow -> r_wrist
     ]
     return key_points, config
+
+
+def to_pckh(query_locations, **kwargs):
+    """
+    Convert query locations to PCKh format.
+    """
+
+    out = [[x, y, 1] for x, y in query_locations]
+
+    return list(chain.from_iterable(out))
