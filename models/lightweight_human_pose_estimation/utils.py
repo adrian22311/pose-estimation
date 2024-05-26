@@ -13,6 +13,8 @@ def to_key_points(query_locations: np.array, **kwargs) -> tuple[list[tuple[float
         x, y, score = query_locations[3 * i], query_locations[3 * i + 1], query_locations[3 * i + 2]
         if score != -1:
             keypoints.append((x, y))
+        else:
+            keypoints.append((None, None))
     
     config: list[tuple[tuple[int, int], int]] = [
         ((0, 1), 0), # neck - nose

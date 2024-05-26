@@ -30,8 +30,9 @@ def to_key_points(query_locations: np.array, **kwargs) -> tuple[list[tuple[float
     keypoints = []
     for idx in selected_keypoints:
         if idx == -1:
-            continue
-        keypoints.append((coordinates[idx, 0], coordinates[idx, 1]))
+            keypoints.append((None, None))
+        else:
+            keypoints.append((coordinates[idx, 0], coordinates[idx, 1]))
     return keypoints, config
 
 
