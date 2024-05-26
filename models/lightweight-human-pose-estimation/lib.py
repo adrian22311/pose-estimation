@@ -30,7 +30,7 @@ def inference(filename):
             fx = np.float32(0.8 * frame.shape[1])
         inference_result = net.infer(scaled_img)
         _, poses_2d = parse_poses(inference_result, input_scale, stride, fx, is_video)
-    return poses_2d[0]
+    return poses_2d[0] if poses_2d else [-1] * 57 + [0]  # return a dummy pose if no pose is detected
         
 
 if __name__ == "__main__":
