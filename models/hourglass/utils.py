@@ -36,22 +36,18 @@ def to_pckh(query_locations: np.array, **kwargs) -> list[int]:
     """
     pckh = [0] * 51
     config = {
-        # 'head_top': 0,
-        # 'upper_neck': 0,
-        # 'thorax': 0,
-        3: 6,
-        4: 8,
-        5: 10,
-        6: 5,
-        7: 7,
-        8: 9,
-        # 'pelvis': 0,
-        10: 12,
-        11: 14,
-        12: 16,
-        13: 11,
-        14: 13,
-        15: 15
+        0: 16, # rank
+        1: 14, # rkne
+        2: 12, # rhip
+        3: 9, # lhip
+        4: 13, # lkne
+        5: 15, # lank
+        10: 10, # rwri
+        11: 8, # relb
+        12: 6, # rsho
+        13: 5, # lsho
+        14: 7, # lelb
+        15: 9 # lwri
     }
 
     for i, keypoint in enumerate(query_locations):
