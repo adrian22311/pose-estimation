@@ -24,7 +24,7 @@ def to_key_points(query_locations: np.array, **kwargs) -> tuple[list[tuple[float
         ((0, 9), 0), ((9, 10), 1), ((10, 11), 1), # neck - r_shoulder - r_elbow - r_wrist
         ((3, 6), 0), ((6, 7), -1), ((7, 8), -1), # l_shoulder - l_hip - l_knee - l_ankle
         ((9, 12), 0), ((12, 13), 1), ((13, 14), 1), # r_shoulder - r_hip - r_knee - r_ankle
-        ((2, 6), 0), ((2, 12)), # pelvis - l_hip - r_hip
+        ((6, 2), 0), ((2, 12), 0), # l_hip - pelvis - r_hip
         ((1, 2), 0) # neck - pelvis
     ]  
     return keypoints, config
