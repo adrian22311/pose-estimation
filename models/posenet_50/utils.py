@@ -12,18 +12,20 @@ def to_key_points(query_locations: np.array, **kwargs) -> tuple[list[tuple[float
         ([1, 3], -1), # leftEye -> leftEar
         ([0, 2], 1), # nose -> rightEye
         ([2, 4], 1), # rightEye -> rightEar
-        ([0, 5], 0), # nose -> leftShoulder
         ([5, 7], -1), # leftShoulder -> leftElbow
         ([7, 9], -1), # leftElbow -> leftWrist
         ([5, 11], 0), # leftShoulder -> leftHip
         ([11, 13], -1), # leftHip -> leftKnee
         ([13, 15], -1), # leftKnee -> leftAnkle
-        ([0, 6], 0), # nose -> rightShoulder
         ([6, 8], 1), # rightShoulder -> rightElbow
         ([8, 10], 1), # rightElbow -> rightWrist
         ([6, 12], 0), # rightShoulder -> rightHip
-        ([11, 13], 1), # rightHip -> rightKnee
-        ([13, 15], 1) # rightKnee -> rightAnkle
+        ([12, 14], 1), # rightHip -> rightKnee
+        ([14, 16], 1), # rightKnee -> rightAnkle
+        ([5, 6], 0), # leftShoulder -> rightShoulder
+        ([11, 12], 0), # leftHip -> rightHip
+        ([3, 5], -1), # leftEar -> leftShoulder
+        ([4, 6], 1), # rightEar -> rightShoulder
     ]
     scores, coordinates =  query_locations
     selected_keypoints = np.where(scores > 0.25, np.arange(17), -1)
@@ -32,7 +34,7 @@ def to_key_points(query_locations: np.array, **kwargs) -> tuple[list[tuple[float
         if idx == -1:
             keypoints.append((None, None))
         else:
-            keypoints.append((coordinates[idx, 0], coordinates[idx, 1]))
+            keypoints.append((coordinates[idx, 1], coordinates[idx, 0]))
     return keypoints, config
 
 
@@ -49,7 +51,7 @@ def to_pckh(query_locations: np.array, **kwargs) -> list[int]:
     for idx in selected_keypoints:
         if idx == -1:
             continue
-        pckh[idx * 3] = round(coordinates[idx, 0])
-        pckh[idx * 3 + 1] = round(coordinates[idx, 1])
+        pckh[idx * 3] = round(coordinates[idx, 1])
+        pckh[idx * 3 + 1] = round(coordinates[idx, 0])
         pckh[idx * 3 + 2] = 1
     return pckh
