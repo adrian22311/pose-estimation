@@ -1,7 +1,8 @@
-import numpy as np
 import json
 
-with open("../sampled/samples_info.json") as f:
+import numpy as np
+
+with open("sampled/samples_info.json") as f:
     SAMPLES_INFO = json.load(f)
 
 
