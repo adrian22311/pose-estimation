@@ -81,7 +81,13 @@ def to_pckh(query_locations, **kwargs) -> list[int]:
 
     for key, x, y in query_locations:
         if key in config:
-            pckh[config[key] * 3] = round(x * image_width)
-            pckh[config[key] * 3 + 1] = round(y * image_height)
+            pckh[config[key] * 3] = x * image_width
+            pckh[config[key] * 3 + 1] = y * image_height
             pckh[config[key] * 3 + 2] = 1
+
+    potential_points = set(config.values())
+    for i in range(17):
+        if i not in potential_points:
+            pckh[i * 3 + 2] = 2
+
     return pckh

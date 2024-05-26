@@ -55,4 +55,10 @@ def to_pckh(query_locations: np.array, **kwargs) -> list[int]:
             pckh[config[i] * 3] = keypoint[0]
             pckh[config[i] * 3 + 1] = keypoint[1]
             pckh[config[i] * 3 + 2] = 1
+
+    potential_points = set(config.values())
+    for i in range(17):
+        if i not in potential_points:
+            pckh[i * 3 + 2] = 2
+            
     return pckh

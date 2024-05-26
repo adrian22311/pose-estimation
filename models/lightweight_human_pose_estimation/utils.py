@@ -67,7 +67,7 @@ def to_pckh(query_locations: np.array, **kwargs) -> list[int]:
         if mapping_idx != -1:
             if new_query_locations[3 * i + 2] == -1:
                 continue
-            pckh[mapping_idx * 3] = round(new_query_locations[3 * i])
-            pckh[mapping_idx * 3 + 1] = round(new_query_locations[3 * i + 1])
+            pckh[mapping_idx * 3] = new_query_locations[3 * i]
+            pckh[mapping_idx * 3 + 1] = new_query_locations[3 * i + 1]
             pckh[mapping_idx * 3 + 2] = 1
     return pckh

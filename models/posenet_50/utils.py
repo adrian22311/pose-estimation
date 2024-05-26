@@ -46,12 +46,12 @@ def to_pckh(query_locations: np.array, **kwargs) -> list[int]:
     :return: list: the list of keypoints (length 17 * 3) - 2D coordinates of the key points in the format of (x, y, s) where x and y are the coordinates of the key points and s indicates the presence of the key point
     """
     pckh = [0] * 51
-    scores, coordinates =  query_locations
+    scores, coordinates = query_locations
     selected_keypoints = np.where(scores > 0.25, np.arange(17), -1)
     for idx in selected_keypoints:
         if idx == -1:
             continue
-        pckh[idx * 3] = round(coordinates[idx, 1])
-        pckh[idx * 3 + 1] = round(coordinates[idx, 0])
+        pckh[idx * 3] = coordinates[idx, 1]
+        pckh[idx * 3 + 1] = coordinates[idx, 0]
         pckh[idx * 3 + 2] = 1
     return pckh
