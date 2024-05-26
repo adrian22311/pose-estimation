@@ -4,7 +4,7 @@ import numpy as np
 from soft_gated.config import config
 import soft_gated.utils.model as model_utils
 import soft_gated.utils.img as img_utils
-from imageio import imread
+from imageio.v2 import imread
 from soft_gated.utils.keypoints import get_keyppoints, post_process_keypoints
 
 net = model_utils.load_model(config)
