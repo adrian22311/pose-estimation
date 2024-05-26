@@ -19,6 +19,7 @@ def get_pose(
     """
 
     image = cv2.imread(filename)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     for key_point in key_points:
         if key_point[0] is None or key_point[1] is None:
             continue
@@ -56,7 +57,7 @@ def get_pose(
         angle = math.degrees(math.atan2(y0 - y1, x0 - x1))
         polygon = cv2.ellipse2Poly((int(x_mean), int(y_mean)), (int(length / 2), int(line_width)), int(angle), 0, 360, 1)
         cv2.fillConvexPoly(image, polygon, color)
-
+        
     return image
 
 
