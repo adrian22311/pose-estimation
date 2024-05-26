@@ -1,9 +1,15 @@
 import math
+
 import cv2
 from matplotlib import pyplot as plt
 
 
-def get_pose(filename: str, key_points: list[tuple[float, float]], edges: list[tuple[tuple[int, int], int]], line_width=5):
+def get_pose(
+    filename: str,
+    key_points: list[tuple[float | None, float | None]],
+    edges: list[tuple[tuple[int, int], int]],
+    line_width=5,
+):
     """
     Draw the pose on the image
     :param filename: str, the path to the image
@@ -14,6 +20,8 @@ def get_pose(filename: str, key_points: list[tuple[float, float]], edges: list[t
 
     image = cv2.imread(filename)
     for key_point in key_points:
+        if key_point[0] is None or key_point[1] is None:
+            continue
         cv2.circle(
             image,
             (int(key_point[0]), int(key_point[1])),
@@ -31,6 +39,9 @@ def get_pose(filename: str, key_points: list[tuple[float, float]], edges: list[t
     for edge in edges:
         x0, y0 = key_points[edge[0][0]]
         x1, y1 = key_points[edge[0][1]]
+        if x0 is None or x1 is None or y0 is None or y1 is None:
+            continue
+
         side = edge[1]
         if side == 0:
             color = (0, 255, 0)
