@@ -8,10 +8,15 @@ def main():
 
     for container_name in container_names:
         print(f"Executing main.py in {container_name}")
-        print(subprocess.check_output(["docker", "exec", container_name, "pip3", "install", "psutil"]).decode())
+        # print(subprocess.check_output(["docker", "exec", container_name, "pip3", "install", "psutil"]).decode())
+        # print(
+        #     subprocess.check_output(
+        #         ["docker", "exec", "-e", f"MODEL_NM={container_name}", "-it", container_name, "python", "/app/main.py"]
+        #     ).decode()
+        # )
         print(
             subprocess.check_output(
-                ["docker", "exec", "-e", f"MODEL_NM={container_name}", "-it", container_name, "python", "/app/main.py"]
+                ["docker", "exec", "-e", f"MODEL_NM={container_name}", "-it", container_name, "python", "/app/interference.py"]
             ).decode()
         )
 
