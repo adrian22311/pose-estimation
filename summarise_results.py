@@ -82,12 +82,14 @@ def calculate_score(
     model,
     image_id: str,
     bbox: list[float],
+    strict: bool = False,
 ) -> float:
     utils_mod, kwargs = MODEL_UTILS_MAPPING[model]
     return calculate_pckh(
         gt_location,
         utils_mod.to_pckh(query_location, **kwargs, image_id=image_id),
         bbox=bbox,
+        strict=strict,
     )
 
 
@@ -114,14 +116,17 @@ if __name__ == "__main__":
     results_score = []
     for model in models:
         scores = []
+        scores_strict = []
         try:
             predictions = get_predictions(model)
             for image_nm, query_location in predictions.items():
                 image_id = image_nm.split(".")[0]
                 gt = samples_info[image_id]["keypoints"]
                 bbox = samples_info[image_id]["bbox"]
-                pckh = calculate_score(gt, query_location, model, image_id, bbox)
-                scores.append(pckh)
+                pckh_nonstrict = calculate_score(gt, query_location, model, image_id, bbox)
+                pckh_strict = calculate_score(gt, query_location, model, image_id, bbox, strict=True)
+                scores.append(pckh_nonstrict)
+                scores_strict.append(pckh_strict)
         except:
             print(f"Error in model {model}")
             continue
@@ -129,6 +134,9 @@ if __name__ == "__main__":
             {
                 "model": model,
                 "mean": np.mean(scores),
+                "std": np.std(scores),
+                "mean_strict": np.mean(scores_strict),
+                "std_strict": np.std(scores_strict),
             }
         )
     results_score_pd = pd.DataFrame(results_score)

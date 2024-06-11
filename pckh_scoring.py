@@ -12,7 +12,7 @@ def validate_keypoints_format(keypoints):
         if visibility not in [0, 1, 2]:
             raise ValueError("Invalid visibility value. Visibility must be 0, 1, or 2.")
 
-def calculate_pckh(gt_keypoints, pred_keypoints, threshold=0.5, bbox: list[float]=None):
+def calculate_pckh(gt_keypoints, pred_keypoints, threshold=0.5, bbox: list[float]=None, strict=False):
     # Validate keypoints format
     validate_keypoints_format(gt_keypoints)
     validate_keypoints_format(pred_keypoints)
@@ -49,7 +49,7 @@ def calculate_pckh(gt_keypoints, pred_keypoints, threshold=0.5, bbox: list[float
         gt_x, gt_y, gt_vis = gt_keypoints[i*3:i*3+3]
         pred_x, pred_y, pred_vis = pred_keypoints[i*3:i*3+3]
 
-        if gt_vis > 0:
+        if gt_vis > (0 + int(strict)):
             if pred_vis != 2:
                 num_valid_keypoints += 1
             if pred_vis == 1:
