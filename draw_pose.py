@@ -1,32 +1,32 @@
 import math
-
+import numpy as np
 import cv2
+
 from matplotlib import pyplot as plt
 
 
 def get_pose(
-    filename: str,
+    input_image: str | np.ndarray,
     key_points: list[tuple[float | None, float | None]],
     edges: list[tuple[tuple[int, int], int]],
     line_width=5,
 ):
     """
     Draw the pose on the image
-    :param filename: str, the path to the image
+    :param filename: str, the path to the image or the image itself
     :param key_points: list, the 2D coordinates of the key points in the format of (x, y)
     :param edges: list, the edges in the format of ((point1, point2), side), where side is -1 for left and 1 for right and 0 for center
     :param line_width: int, the width of the lines
     """
 
-    image = cv2.imread(filename)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    image = cv2.imread(input_image) if isinstance(input_image, str) else input_image
     for key_point in key_points:
         if key_point[0] is None or key_point[1] is None:
             continue
         cv2.circle(
             image,
             (int(key_point[0]), int(key_point[1])),
-            line_width * 3,
+            line_width * 2,
             (255, 255, 255),
             thickness=-1,
         )
