@@ -24,6 +24,8 @@ def to_key_points(query_locations, **kwargs) -> tuple[list[tuple[float, float]],
     """
     if "image_id" in kwargs:
         image_width, image_height = get_image_width_height(kwargs["image_id"])
+    elif "image_width" in kwargs and "image_height" in kwargs:
+        image_width, image_height = kwargs["image_width"], kwargs["image_height"]
 
     query_locations = query_locations[0]
 
