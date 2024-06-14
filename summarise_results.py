@@ -115,28 +115,32 @@ if __name__ == "__main__":
         samples_info = json.load(f)
     results_score = []
     for model in models:
-        scores = []
-        scores_strict = []
+        total_correct_keypoints = 0
+        total_strict_correct_keypoints = 0
+        total_valid_keypoints = 0
+        total_strict_valid_keypoints = 0
         try:
             predictions = get_predictions(model)
             for image_nm, query_location in predictions.items():
                 image_id = image_nm.split(".")[0]
                 gt = samples_info[image_id]["keypoints"]
                 bbox = samples_info[image_id]["bbox"]
-                pckh_nonstrict = calculate_score(gt, query_location, model, image_id, bbox)
-                pckh_strict = calculate_score(gt, query_location, model, image_id, bbox, strict=True)
-                scores.append(pckh_nonstrict)
-                scores_strict.append(pckh_strict)
+                # pckh_nonstrict = calculate_score(gt, query_location, model, image_id, bbox)
+                num_correct_keypoints, num_valid_keypoints = calculate_score(gt, query_location, model, image_id, bbox)
+                num_correct_keypoints_strict, num_valid_keypoints_strict = calculate_score(gt, query_location, model, image_id, bbox, strict=True)
+                # pckh_strict = calculate_score(gt, query_location, model, image_id, bbox, strict=True)
+                total_correct_keypoints += num_correct_keypoints
+                total_valid_keypoints += num_valid_keypoints
+                total_strict_correct_keypoints += num_correct_keypoints_strict
+                total_strict_valid_keypoints += num_valid_keypoints_strict
         except:
             print(f"Error in model {model}")
             continue
         results_score.append(
             {
                 "model": model,
-                "mean": np.mean(scores),
-                "std": np.std(scores),
-                "mean_strict": np.mean(scores_strict),
-                "std_strict": np.std(scores_strict),
+                "pckh": total_correct_keypoints / total_valid_keypoints if total_valid_keypoints > 0 else 0,
+                "pckh_strict": total_strict_correct_keypoints / total_strict_valid_keypoints if total_strict_valid_keypoints > 0 else 0
             }
         )
     results_score_pd = pd.DataFrame(results_score)

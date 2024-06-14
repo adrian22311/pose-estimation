@@ -58,8 +58,8 @@ def calculate_pckh(gt_keypoints, pred_keypoints, threshold=0.5, bbox: list[float
                 if normalized_distance <= threshold:
                     num_correct_keypoints += 1
 
-    pckh = num_correct_keypoints / num_valid_keypoints if num_valid_keypoints > 0 else 0
-    return pckh
+    # pckh = num_correct_keypoints / num_valid_keypoints if num_valid_keypoints > 0 else 0
+    return num_correct_keypoints, num_valid_keypoints
 
 if __name__ == "__main__":
     # Example usage
