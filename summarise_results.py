@@ -45,13 +45,15 @@ def list_models() -> list[str]:
     ]
 
 
-def get_times(model: str) -> np.ndarray:
-    with open(os.path.join(OUTPUT_ROOT, model, "times.txt"), "r") as f:
+def get_times(model: str, deployed: bool = False) -> np.ndarray:
+    filename = "times.txt" if not deployed else "times_deployed.txt"
+    with open(os.path.join(OUTPUT_ROOT, model, filename), "r") as f:
         return np.array([float(line) * 1000 for line in f.readlines()])
 
 
-def get_cpu(model: str) -> np.ndarray:
-    with open(os.path.join(OUTPUT_ROOT, model, "cpu.txt"), "r") as f:
+def get_cpu(model: str, deployed: bool = False) -> np.ndarray:
+    filename = "cpu.txt" if not deployed else "cpu_deployed.txt"
+    with open(os.path.join(OUTPUT_ROOT, model, filename), "r") as f:
         return np.array([float(line) for line in f.readlines()])
 
 
@@ -67,11 +69,12 @@ def calculate_statistics(times: np.ndarray) -> dict[str, Any]:
     }
 
 
-def get_predictions(model: str) -> dict[str, Any]:
+def get_predictions(model: str, deployed: bool = False) -> dict[str, Any]:
+    filename = "scores.pkl" if not deployed else "scores_deployed.pkl"
     utils, _ = MODEL_UTILS_MAPPING[model]
     if utils is None:
         raise NotImplementedError(f"Model {model} not implemented")
-    with open(os.path.join(OUTPUT_ROOT, model, "scores.pkl"), "rb") as f:
+    with open(os.path.join(OUTPUT_ROOT, model, filename), "rb") as f:
         predictions = pickle.load(f)
     return predictions
 
@@ -92,12 +95,40 @@ def calculate_score(
         strict=strict,
     )
 
+def calc_scores(model: str, samples_info: dict[str, Any], deployed: bool = False):
+    total_correct_keypoints = 0
+    total_strict_correct_keypoints = 0
+    total_valid_keypoints = 0
+    total_strict_valid_keypoints = 0
+    predictions = get_predictions(model, deployed=deployed)
+
+    for image_nm, query_location in predictions.items():
+        image_id = image_nm.split(".")[0]
+        gt = samples_info[image_id]["keypoints"]
+        bbox = samples_info[image_id]["bbox"]
+        # pckh_nonstrict = calculate_score(gt, query_location, model, image_id, bbox)
+        num_correct_keypoints, num_valid_keypoints = calculate_score(gt, query_location, model, image_id, bbox)
+        num_correct_keypoints_strict, num_valid_keypoints_strict = calculate_score(gt, query_location, model, image_id, bbox, strict=True)
+        # pckh_strict = calculate_score(gt, query_location, model, image_id, bbox, strict=True)
+        total_correct_keypoints += num_correct_keypoints
+        total_valid_keypoints += num_valid_keypoints
+        total_strict_correct_keypoints += num_correct_keypoints_strict
+        total_strict_valid_keypoints += num_valid_keypoints_strict
+    return (total_correct_keypoints,
+        total_strict_correct_keypoints,
+        total_valid_keypoints,
+        total_strict_valid_keypoints
+    )
+
 
 if __name__ == "__main__":
     models = list_models()
 
     results = []
     results_cpu = []
+    results_deployed = []
+    results_cpu_deployed = []
+    models_deployed = []
     for model in models:
         times = get_times(model)
         stats = calculate_statistics(times)
@@ -105,34 +136,36 @@ if __name__ == "__main__":
         cpu = get_cpu(model)
         stats_cpu = calculate_statistics(cpu)
         results_cpu.append(stats_cpu)
+        try:
+            times = get_times(model, deployed=True)
+            stats = calculate_statistics(times)
+            results_deployed.append(stats)
+            cpu = get_cpu(model, deployed=True)
+            stats_cpu = calculate_statistics(cpu)
+            results_cpu_deployed.append(stats_cpu)
+            models_deployed.append(model)
+        except FileNotFoundError:
+            continue
+
     results_pd = pd.DataFrame(results, index=models)
     results_cpu_pd = pd.DataFrame(results_cpu, index=models)
+    results_pd_deployed = pd.DataFrame(results_deployed, index=models_deployed)
+    results_cpu_pd_deployed = pd.DataFrame(results_cpu_deployed, index=models_deployed)
 
     results_pd.to_csv(os.path.join(OUTPUT_ROOT, "results_time.csv"), index=True)
     results_cpu_pd.to_csv(os.path.join(OUTPUT_ROOT, "results_cpu.csv"), index=True)
+    results_pd_deployed.to_csv(os.path.join(OUTPUT_ROOT, "results_time_deployed.csv"), index=True)
+    results_cpu_pd_deployed.to_csv(os.path.join(OUTPUT_ROOT, "results_cpu_deployed.csv"), index=True)
 
     with open("sampled/samples_info.json") as f:
         samples_info = json.load(f)
     results_score = []
+    results_score_deployed = []
     for model in models:
-        total_correct_keypoints = 0
-        total_strict_correct_keypoints = 0
-        total_valid_keypoints = 0
-        total_strict_valid_keypoints = 0
         try:
-            predictions = get_predictions(model)
-            for image_nm, query_location in predictions.items():
-                image_id = image_nm.split(".")[0]
-                gt = samples_info[image_id]["keypoints"]
-                bbox = samples_info[image_id]["bbox"]
-                # pckh_nonstrict = calculate_score(gt, query_location, model, image_id, bbox)
-                num_correct_keypoints, num_valid_keypoints = calculate_score(gt, query_location, model, image_id, bbox)
-                num_correct_keypoints_strict, num_valid_keypoints_strict = calculate_score(gt, query_location, model, image_id, bbox, strict=True)
-                # pckh_strict = calculate_score(gt, query_location, model, image_id, bbox, strict=True)
-                total_correct_keypoints += num_correct_keypoints
-                total_valid_keypoints += num_valid_keypoints
-                total_strict_correct_keypoints += num_correct_keypoints_strict
-                total_strict_valid_keypoints += num_valid_keypoints_strict
+            total_correct_keypoints, total_strict_correct_keypoints, total_valid_keypoints, total_strict_valid_keypoints = calc_scores(
+                model, samples_info, deployed=False
+            )
         except:
             print(f"Error in model {model}")
             continue
@@ -143,5 +176,22 @@ if __name__ == "__main__":
                 "pckh_strict": total_strict_correct_keypoints / total_strict_valid_keypoints if total_strict_valid_keypoints > 0 else 0
             }
         )
+        try:
+            total_correct_keypoints, total_strict_correct_keypoints, total_valid_keypoints, total_strict_valid_keypoints = calc_scores(
+                model, samples_info, deployed=True
+            )
+        except Exception as e:
+            print(f"Error in model {model}. Model might not be deployed.")
+            print(str(e))
+            continue
+        results_score_deployed.append(
+            {
+                "model": model,
+                "pckh": total_correct_keypoints / total_valid_keypoints if total_valid_keypoints > 0 else 0,
+                "pckh_strict": total_strict_correct_keypoints / total_strict_valid_keypoints if total_strict_valid_keypoints > 0 else 0
+            }
+        )
     results_score_pd = pd.DataFrame(results_score)
     results_score_pd.to_csv(os.path.join(OUTPUT_ROOT, "results_score.csv"), index=False)
+    results_score_pd_deployed = pd.DataFrame(results_score_deployed)
+    results_score_pd_deployed.to_csv(os.path.join(OUTPUT_ROOT, "results_score_deployed.csv"), index=False)
