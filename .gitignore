@@ -1,6 +1,10 @@
 __pycache__
 *.pyc
-sampled/
 *.bin
 *.xml
 *.onnx
+sampled
+wycinki
+models/container_names.txt
+wycinki_output
+test.ipynb
