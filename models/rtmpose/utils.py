@@ -9,7 +9,7 @@ def _to_key_points(
     """
     Convert query locations to key points.
     """
-    if (threshold := kwargs.get("threshold", None)) is not None:
+    if (threshold := kwargs.get("threshold", None)) is None:
         threshold = THRESHOLD
 
     keypoints = query_locations["keypoints"]  # works for both 17 and 26 keypoints
