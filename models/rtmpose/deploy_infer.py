@@ -72,7 +72,7 @@ if __name__ == "__main__":
     import os
 
     MODEL_NM = os.getenv("MODEL_NM", "rtm_body8_det-m_pose-m")
-    IMG_PATH = "/home/kaminskia/studies/s10/pose-estimation/sampled/sampled_images/108495_487402.jpg"
+    IMG_PATH = "./sampled/sampled_images/108495_487402.jpg"
 
     assert MODEL_NM is not None, "MODEL_NM environment variable is not set."
 
@@ -89,7 +89,7 @@ if __name__ == "__main__":
 
 
     core = ov.Core()
-    model = f"/home/kaminskia/studies/s10/pose-estimation/out/{MODEL_NM}/{MODEL_NM}.xml"
+    model = f"./out/{MODEL_NM}/{MODEL_NM}.xml"
     compiled_model = core.compile_model(
         model=model, device_name="CPU"#, config={"DYN_BATCH_ENABLED": "YES"}
     )

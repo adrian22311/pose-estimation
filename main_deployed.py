@@ -10,8 +10,8 @@ import numpy as np
 import psutil
 
 WARMUP_RUNS = 3
-DATA_ROOT = "/home/kaminskia/studies/s10/pose-estimation/sampled"
-OUTPUT_ROOT = "/home/kaminskia/studies/s10/pose-estimation/out"
+DATA_ROOT = "./pose-estimation/sampled"
+OUTPUT_ROOT = "./pose-estimation/out"
 
 IMAGES_ROOT = os.path.join(DATA_ROOT, "sampled_images")
 # MODEL_NM = os.environ.get("MODEL_NM", None)

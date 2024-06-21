@@ -31,7 +31,7 @@ else:
     N_KEYPOINTS = 17
 
 core = ov.Core()
-model = f"/home/kaminskia/studies/s10/pose-estimation/out/{MODEL_NM}/{MODEL_NM}.xml"
+model = f"./pose-estimation/out/{MODEL_NM}/{MODEL_NM}.xml"
 compiled_model = core.compile_model(
     model=model, device_name="CPU"#, config={"DYN_BATCH_ENABLED": "YES"}
 )
@@ -96,7 +96,7 @@ def inference(img: str | np.ndarray, bboxes: np.ndarray = None):
 
 if __name__ == "__main__":
     import cv2
-    filename = "/home/kaminskia/studies/s10/pose-estimation/sampled/sampled_images/108495_487402.jpg"
+    filename = "./sampled/sampled_images/108495_487402.jpg"
     def load_img(filename: str) -> np.ndarray:
 
         with open(filename, 'rb') as f:
