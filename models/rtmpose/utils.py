@@ -3,13 +3,13 @@ from itertools import chain
 THRESHOLD = 0.3
 
 
-def to_key_points(
+def _to_key_points(
     query_locations, **kwargs
 ) -> tuple[list[tuple[float, float]], list[tuple[tuple[int, int], int]]]:
     """
     Convert query locations to key points.
     """
-    if (threshold := kwargs.get("threshold"), None) is not None:
+    if (threshold := kwargs.get("threshold", None)) is not None:
         threshold = THRESHOLD
 
     keypoints = query_locations["keypoints"]  # works for both 17 and 26 keypoints
@@ -73,6 +73,27 @@ def to_key_points(
 
     return key_points, config
 
+def to_key_points(
+    query_locations, **kwargs
+) -> tuple[list[tuple[float, float]], list[tuple[tuple[int, int], int]]]:
+    """
+    Convert query locations to key points.
+    """
+    if len(query_locations["keypoints"].shape) == 2:
+        return _to_key_points(query_locations, **kwargs)
+    if len(query_locations["keypoints"].shape) == 3:
+        out_keypoints = []
+
+        for i in range(query_locations["keypoints"].shape[0]):
+            tmp_keypoints = {}
+            tmp_keypoints["keypoints"] = query_locations["keypoints"][i]
+            tmp_keypoints["keypoint_scores"] = query_locations["keypoint_scores"][i]
+
+            key_points, config = _to_key_points(tmp_keypoints, **kwargs)
+            out_keypoints.append(key_points)
+
+        return out_keypoints, config
+    raise ValueError("Invalid query locations shape.")
 
 def to_pckh(query_locations, **kwargs):
     """
